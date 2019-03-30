@@ -1,214 +1,206 @@
-Ruby on Rails 3.0 Release Notes
+Ruby on Rails 3.0 リリースノート
 ===============================
 
-Rails 3.0 is ponies and rainbows! It's going to cook you dinner and fold your laundry. You're going to wonder how life was ever possible before it arrived. It's the Best Version of Rails We've Ever Done!
+Rails 3.0は、晩ご飯も作れば洗濯物も畳んでくれる、夢のような製品です。Rails 3.0なしで今までどうやって暮らしていけたのか、不思議で仕方がなくなるでしょう。Rails 3.0は、これまでのRailsバージョンの中でかつてない高みに到達しました。
 
-But seriously now, it's really good stuff. There are all the good ideas brought over from when the Merb team joined the party and brought a focus on framework agnosticism, slimmer and faster internals, and a handful of tasty APIs. If you're coming to Rails 3.0 from Merb 1.x, you should recognize lots. If you're coming from Rails 2.x, you're going to love it too.
+冗談はともかく、Rails 3.0は実によい仕上がりとなりました。Merbチームが我らがRailsチームに参加したことでもたらされた素晴らしいアイデアがすべて込められています。Merbチームはフレームワークの謎に満ちた内部をスリムかつ高速化し、素敵なAPIを多数もたらしてくれました。Merb 1.xをご存じの方であれば、Rails 3.0にその成果が多数盛り込まれていることがおわかりいただけるはずです。Rails 2.xをご存じの方もきっとRails 3.0を好きになっていただけるでしょう。
 
-Even if you don't give a hoot about any of our internal cleanups, Rails 3.0 is going to delight. We have a bunch of new features and improved APIs. It's never been a better time to be a Rails developer. Some of the highlights are:
+多くの機能や改良APIを搭載したRails 3.0は、内部がきれいになったかどうかに関心のない方も夢中になるでしょう。Railsアプリケーション開発者にとって、かつてないほど素晴らしい時期が到来しました。その中からいくつかご紹介します。
 
-* Brand new router with an emphasis on RESTful declarations
-* New Action Mailer API modeled after Action Controller (now without the agonizing pain of sending multipart messages!)
-* New Active Record chainable query language built on top of relational algebra
-* Unobtrusive JavaScript helpers with drivers for Prototype, jQuery, and more coming (end of inline JS)
-* Explicit dependency management with Bundler
+* RESTful宣言を重視する新しいルーター
+* Action Controllerの後でモデル化される新しいAction Mailer API（もうマルチパートメッセージの送信で悩むことはありません！）
+* リレーショナル代数の上で構築される、Active Recordのチェイン可能なクエリ言語
+* Prototype.jsやjQueryなどのドライバを搭載したUnobtrusive JavaScript（UJS）ヘルパー（さようならインラインJS）
+* Bundlerによる明示的な依存性管理
 
-On top of all that, we've tried our best to deprecate the old APIs with nice warnings. That means that you can move your existing application to Rails 3 without immediately rewriting all your old code to the latest best practices.
+そして何よりも、今回私たちは旧APIを非推奨化する際にできるかぎり適切なwarningを表示することを心がけました。つまり、Rails 3に移行するために、既存のアプリケーションの古いコードを今すぐ最新のベストプラクティスにすべて書き換えなくてもよいということです。
 
-These release notes cover the major upgrades, but don't include every little bug fix and change. Rails 3.0 consists of almost 4,000 commits by more than 250 authors! If you want to see everything, check out the [list of commits](http://github.com/rails/rails/commits/master) in the main Rails repository on GitHub.
+これらのリリースノートでは主要なアップグレードを取り扱いますが、細かなバグ修正や変更点については記載しませんのでご注意ください。Rails 3.0は、250人を超える人々による4,000件近いコミットを含みます。すべての変更点をチェックしたい方は、GitHub上のメインRailsリポジトリで[コミットリスト](https://github.com/rails/rails/commits/3-0-stable)をご覧ください。
 
 --------------------------------------------------------------------------------
 
-To install Rails 3:
+Rails 3のインストール方法は次のとおりです。
 
 ```bash
-# Use sudo if your setup requires it
+# セットアップで必要な場合はsudoを使います
 $ gem install rails
 ```
 
 
-Upgrading to Rails 3
+Rails 3へのアップグレード
 --------------------
 
-If you're upgrading an existing application, it's a great idea to have good test coverage before going in. You should also first upgrade to Rails 2.3.5 and make sure your application still runs as expected before attempting to update to Rails 3. Then take heed of the following changes:
+既存のアプリケーションをアップグレードするのであれば、その前に質のよいテストカバレッジを用意するのはよい考えです。アプリケーションがRails 2.3.5までアップグレードされていない場合は先にそれを完了し、アプリケーションが正常に動作することを十分確認してからRails 3にアップデートしてください。終わったら、以下の変更点にご注意ください。
 
-### Rails 3 requires at least Ruby 1.8.7
+### Rails 3ではRuby 1.8.7以降が必須
 
-Rails 3.0 requires Ruby 1.8.7 or higher. Support for all of the previous Ruby versions has been dropped officially and you should upgrade as early as possible. Rails 3.0 is also compatible with Ruby 1.9.2.
+Rails 3.0ではRuby 1.8.7以上が必須です。これより前のバージョンのRubyのサポートは公式に廃止されたため、速やかにRubyをアップグレードすべきです。Rails 3.0はRuby 1.9.2とも互換性があります。
 
-TIP: Note that Ruby 1.8.7 p248 and p249 have marshaling bugs that crash Rails 3.0. Ruby Enterprise Edition have these fixed since release 1.8.7-2010.02 though. On the 1.9 front, Ruby 1.9.1 is not usable because it outright segfaults on Rails 3.0, so if you want to use Rails 3 with 1.9.x jump on 1.9.2 for smooth sailing.
+TIP: Ruby 1.8.7のp248とp249には、Railsクラッシュの原因となるマーシャリングのバグがあります。なおRuby Enterprise Editionでは1.8.7-2010.02のリリースでこの問題が修正されました。現行のRuby 1.9のうち、Ruby 1.9.1はRails 3.0でセグメンテーションフォールト（segfault）で完全にダウンするため利用できません。Railsをスムーズに動かすため、Rails 3でRuby 1.9.xを使いたい場合は1.9.2をお使いください。
 
-### Rails Application object
+### Railsの「アプリケーションオブジェクト」
 
-As part of the groundwork for supporting running multiple Rails applications in the same process, Rails 3 introduces the concept of an Application object. An application object holds all the application specific configurations and is very similar in nature to `config/environment.rb` from the previous versions of Rails.
+Rails 3では、同一プロセス内で複数のRailsアプリケーション実行をサポートするための基礎の一環として、「アプリケーションオブジェクト」という概念が導入されました。1つのアプリケーションオブジェクトには、そのアプリケーション固有の設定がすべて保持されます。しかも、この設定は従来のRailsの`config/environment.rb`と極めて似通っています。
 
-Each Rails application now must have a corresponding application object. The application object is defined in `config/application.rb`. If you're upgrading an existing application to Rails 3, you must add this file and move the appropriate configurations from `config/environment.rb` to `config/application.rb`.
+今後、各Railsアプリケーションはそれに対応するアプリケーションオブジェクトを持たなければなりません。このアプリケーションオブジェクトは`config/application.rb`で定義されます。既存のアプリケーションをRails 3にアップグレードする場合、この`config/application.rb`を追加して、`config/environment.rb`内の設定を適宜そこに移動しなければなりません。
 
-### script/* replaced by script/rails
+### script/*がscript/railsに置き換えられる
 
-The new `script/rails` replaces all the scripts that used to be in the `script` directory. You do not run `script/rails` directly though, the `rails` command detects it is being invoked in the root of a Rails application and runs the script for you. Intended usage is:
+従来スクリプトの置き場に使われていた`script`ディレクトリは、新しい`script/rails`に置き換えられます。`script/rails`は直接実行するものではありませんが、Railsアプリケーションのルートディレクトリで呼び出されたことを`rails`コマンドが検知して、代わりにスクリプトを実行します。望ましい用法は以下のとおりです。
 
 ```bash
-$ rails console                      # instead of script/console
-$ rails g scaffold post title:string # instead of script/generate scaffold post title:string
+$ rails console                      # script/consoleではない
+$ rails g scaffold post title:string # script/generate scaffold post title:stringではない
 ```
 
-Run `rails --help` for a list of all the options.
+`rails --help`を実行すればすべてのオプションを表示できます。
 
-### Dependencies and config.gem
+### 依存関係とconfig.gem
 
-The `config.gem` method is gone and has been replaced by using `bundler` and a `Gemfile`, see [Vendoring Gems](#vendoring-gems) below.
+従来の`config.gem`を用いる方式は廃止され、`bundler`と`Gemfile`を用いる方式に置き換えられました。後述の[gemに移行する](#gemに移行する)を参照してください。
 
-### Upgrade Process
+### アップグレードプロセス
 
-To help with the upgrade process, a plugin named [Rails Upgrade](http://github.com/rails/rails_upgrade) has been created to automate part of it.
+アップグレードプロセスを支援するために、[Rails Upgrade](http://github.com/rails/rails_upgrade)というプラグインが自動化の一部として作成されました。
 
-Simply install the plugin, then run `rake rails:upgrade:check` to check your app for pieces that need to be updated (with links to information on how to update them). It also offers a task to generate a `Gemfile` based on your current `config.gem` calls and a task to generate a new routes file from your current one. To get the plugin, simply run the following:
+このプラグインをインストールして`rake rails:upgrade:check`を実行すれば、アプリ内でアップデートの必要な箇所をチェックできます（アップグレード方法の情報へのリンクも表示されます）。このプラグインは、`config.gem`呼び出しに基づいて`Gemfile`を生成するタスクや、現在のルーティングから新しいルーティングファイルを生成するタスクも提供します。以下を実行すればプラグインを取得できます。
 
 ```bash
 $ ruby script/plugin install git://github.com/rails/rails_upgrade.git
 ```
 
-You can see an example of how that works at [Rails Upgrade is now an Official Plugin](http://omgbloglol.com/post/364624593/rails-upgrade-is-now-an-official-plugin)
+動作例については「[Rails Upgradeプラグインが公式化された] (http://omgbloglol.com/post/364624593/rails-upgrade-is-now-an-official-plugin)
+（英語）」で参照できます。
 
-Aside from Rails Upgrade tool, if you need more help, there are people on IRC and [rubyonrails-talk](http://groups.google.com/group/rubyonrails-talk) that are probably doing the same thing, possibly hitting the same issues. Be sure to blog your own experiences when upgrading so others can benefit from your knowledge!
+Rails Upgradeツール以外にも、支援が必要な場合はIRCやGoogleグループの[rubyonrails-talk](http://groups.google.com/group/rubyonrails-talk)に自分と同じ問題に遭遇した人がおそらくいるでしょう。ぜひアップグレード作業をブログ記事にして、他の人々も知見を得られるようにしましょう。
 
-Creating a Rails 3.0 application
+Rails 3.0アプリケーションを作成する
 --------------------------------
 
-```bash
-# You should have the 'rails' RubyGem installed
+```
+# 'rails'というRubyGemがインストールされている必要があります。
 $ rails new myapp
 $ cd myapp
 ```
 
-### Vendoring Gems
+### gemに移行する
 
-Rails now uses a `Gemfile` in the application root to determine the gems you require for your application to start. This `Gemfile` is processed by the [Bundler](http://github.com/carlhuda/bundler,) which then installs all your dependencies. It can even install all the dependencies locally to your application so that it doesn't depend on the system gems.
+今後のRailsでは、アプリケーションのルートディレクトリに置かれる`Gemfile`を使って、アプリケーションの起動に必要なgemを指定するようになりました。この`Gemfile`は[Bundler](https://github.com/carlhuda/bundler)というgemによって処理され、依存関係のある必要なgemをすべてインストールします。依存するgemをそのアプリケーションの中にだけインストールして、OS環境にある既存のgemに影響を与えないようにすることもできます。
 
-More information: - [bundler homepage](http://bundler.io/)
+詳細情報: [Bundlerホームページ](https://bundler.io/)
 
-### Living on the Edge
+### 最新のgemを使う
 
-`Bundler` and `Gemfile` makes freezing your Rails application easy as pie with the new dedicated `bundle` command, so `rake freeze` is no longer relevant and has been dropped.
+`Bundler`と`Gemfile`のおかげで、専用の`bundle`コマンド一発でRailsアプリケーションのgemを簡単に安定させることができます。Gitリポジトリから直接bundleしたい場合は`--edge`フラグを追加します。
 
-If you want to bundle straight from the Git repository, you can pass the `--edge` flag:
-
-```bash
+```
 $ rails new myapp --edge
 ```
 
-If you have a local checkout of the Rails repository and want to generate an application using that, you can pass the `--dev` flag:
+Railsアプリケーションのリポジトリをローカルにチェックアウトしたものがあり、それを使ってアプリケーションを生成したい場合は、`--dev`フラグを追加します。
 
-```bash
+```
 $ ruby /path/to/rails/bin/rails new myapp --dev
 ```
 
-Rails Architectural Changes
+Railsアーキテクチャの変更
 ---------------------------
 
-There are six major changes in the architecture of Rails.
+Railsのアーキテクチャで6つの大きな変更点が発生しました。
 
-### Railties Restrung
+### Railtiesが一新された
 
-Railties was updated to provide a consistent plugin API for the entire Rails framework as well as a total rewrite of generators and the Rails bindings, the result is that developers can now hook into any significant stage of the generators and application framework in a consistent, defined manner.
+Railtiesが更新され、Railsフレームワーク全体で一貫したプラグインAPIを提供するようになるとともに、ジェネレータやRailsバインディングが完全に書き直されました。これによって、開発者がジェネレータやアプリケーションフレームワークのあらゆる重要なステージに統一的かつ定義済みの方法でフックをかけられるようになりました。
 
-### All Rails core components are decoupled
+### Railsのあらゆるコアコンポーネントが分離された
 
-With the merge of Merb and Rails, one of the big jobs was to remove the tight coupling between Rails core components. This has now been achieved, and all Rails core components are now using the same API that you can use for developing plugins. This means any plugin you make, or any core component replacement (like DataMapper or Sequel) can access all the functionality that the Rails core components have access to and extend and enhance at will.
+MerbとRailsの主要なマージ作業のひとつが、Railsのコアコンポーネントの密結合を切り離すことでした。この作業が完了したことで、Railsのあらゆるコアコンポーネントが同一のAPIを使うようになりました。これらのAPIはプラグイン開発に利用できます。つまり、作成したプラグインやコアコンポーネントを置き換える（DataMapperやSequelなど）際に、Railsコアコンポーネントからアクセスできるあらゆる機能にアクセスして自由自在に拡張できるようになったということです。
 
-More information: - [The Great Decoupling](http://yehudakatz.com/2009/07/19/rails-3-the-great-decoupling/)
+詳しくは「[The Great Decoupling](http://yehudakatz.com/2009/07/19/rails-3-the-great-decoupling/)」を参照してください。
 
+### Active Modelを抽象化した
 
-### Active Model Abstraction
+密結合したコアコンポーネントの切り離し作業の一環として、Active Recordへの結合をAction Packから切り出しました。この作業が完了したことで、新しいORMプラグインではActive Modelインターフェイスを実装するだけでAction Packとシームレスに協調動作できるようになりました。
 
-Part of decoupling the core components was extracting all ties to Active Record from Action Pack. This has now been completed. All new ORM plugins now just need to implement Active Model interfaces to work seamlessly with Action Pack.
+詳しくは「[Make Any Ruby Object Feel Like ActiveRecord](http://yehudakatz.com/2010/01/10/activemodel-make-any-ruby-object-feel-like-activerecord/)」を参照してください。
 
-More information: - [Make Any Ruby Object Feel Like ActiveRecord](http://yehudakatz.com/2010/01/10/activemodel-make-any-ruby-object-feel-like-activerecord/)
+### コントローラを抽象化した
 
+密結合したコアコンポーネントの切り離し作業として、基底スーパークラスを1つ作成しました。このクラスは、ビューのレンダリングなどを扱うHTTPの記法から分離されています。この`AbstractController`クラスを作成したことで、`ActionController`や`ActionMailer`が極めてシンプルになり、これらのライブラリすべてから共通部分が切り出されてAbstract Controllerに移動しました。
 
-### Controller Abstraction
+詳しくは「[Rails Edge Architecture](http://yehudakatz.com/2009/06/11/rails-edge-architecture/)」を参照してください。
 
-Another big part of decoupling the core components was creating a base superclass that is separated from the notions of HTTP in order to handle rendering of views etc. This creation of `AbstractController` allowed `ActionController` and `ActionMailer` to be greatly simplified with common code removed from all these libraries and put into Abstract Controller.
+### Arelを統合した
 
-More Information: - [Rails Edge Architecture](http://yehudakatz.com/2009/06/11/rails-edge-architecture/)
+[Arel](http://github.com/brynary/arel)（Active Relationとも呼ばれます）がActive Recordの下に配置され、Railsで必須のコンポーネントになりました。Arelは、Active Recordを簡潔にするSQL抽象化を提供し、Active Recordのリレーション機能を支えます。
 
+詳しくは「[Why I wrote Arel](http://magicscalingsprinkles.wordpress.com/2010/01/28/why-i-wrote-arel/)」を参照してください。
 
-### Arel Integration
+### メールを切り出した
 
-[Arel](http://github.com/brynary/arel) (or Active Relation) has been taken on as the underpinnings of Active Record and is now required for Rails. Arel provides an SQL abstraction that simplifies out Active Record and provides the underpinnings for the relation functionality in Active Record.
+Action Mailerは最初期からモンキーパッチやプリパーサーだらけで、配信エージェントや受信エージェントまであり、さらにソースツリーでTMailをベンダリングしているというありさまでした。Rails 3では、メールに関連するあらゆる機能を[Mail](http://github.com/mikel/mail) gemで抽象化しました。こちらでもコードの重複が著しく解消され、Action Mailerとメールパーサーの間に定義可能な境界を作成しやすくなりました。
 
-More information: - [Why I wrote Arel](http://magicscalingsprinkles.wordpress.com/2010/01/28/why-i-wrote-arel/.)
+詳しくは「[New Action Mailer API in Rails 3](http://lindsaar.net/2010/1/26/new-actionmailer-api-in-rails-3)」を参照してください。
 
-
-### Mail Extraction
-
-Action Mailer ever since its beginnings has had monkey patches, pre parsers and even delivery and receiver agents, all in addition to having TMail vendored in the source tree. Version 3 changes that with all email message related functionality abstracted out to the [Mail](http://github.com/mikel/mail) gem. This again reduces code duplication and helps create definable boundaries between Action Mailer and the email parser.
-
-More information: - [New Action Mailer API in Rails 3](http://lindsaar.net/2010/1/26/new-actionmailer-api-in-rails-3)
-
-
-Documentation
+ドキュメント
 -------------
 
-The documentation in the Rails tree is being updated with all the API changes, additionally, the [Rails Edge Guides](http://edgeguides.rubyonrails.org/) are being updated one by one to reflect the changes in Rails 3.0. The guides at [guides.rubyonrails.org](http://guides.rubyonrails.org/) however will continue to contain only the stable version of Rails (at this point, version 2.3.5, until 3.0 is released).
+Railsツリーのドキュメントが更新されてAPI変更がすべて反映されました。さらに、[Rails Edgeガイド](http://edgeguides.rubyonrails.org/)にもRails 3.0の変更点を順次反映中です。ただし、[guides.rubyonrails.org](http://guides.rubyonrails.org/)の本ガイドについては、安定版Railsのドキュメントのみを含みます（執筆時点では3.0がリリースされるまで2.3.5となります）。
 
-More Information: - [Rails Documentation Projects](http://weblog.rubyonrails.org/2009/1/15/rails-documentation-projects.)
+詳しくは「[Rails Documentation Projects](http://weblog.rubyonrails.org/2009/1/15/rails-documentation-projects.)」を参照してください。
 
-
-Internationalization
+国際化（I18n）
 --------------------
 
-A large amount of work has been done with I18n support in Rails 3, including the latest [I18n](http://github.com/svenfuchs/i18n) gem supplying many speed improvements.
+Rails 3では国際化（I18n）のサポートに関して、速度改善が著しい最新の[I18n](http://github.com/svenfuchs/i18n) gemなど多くの作業が行われました。
 
-* I18n for any object - I18n behavior can be added to any object by including `ActiveModel::Translation` and `ActiveModel::Validations`. There is also an `errors.messages` fallback for translations.
-* Attributes can have default translations.
-* Form Submit Tags automatically pull the correct status (Create or Update) depending on the object status, and so pull the correct translation.
-* Labels with I18n also now work by just passing the attribute name.
+* あらゆるオブジェクトでのI18n: `ActiveModel::Translation`や`ActiveModel::Validations`を含むあらゆるオブジェクトにI18nの振る舞いを追加できます。訳文の`errors.messages`フォールバック機能もあります。
+* 属性にデフォルトの訳文を与えられます。
+* フォームのsubmitタグが、オブジェクトのステータスに応じて自動的に正しいステータス（CreateまたはUpdate）を取れるようになったことで、正しい訳文も取れるようになりました。
+* I18n化されたラベルに属性名を渡すだけで使えるようになりました。
 
-More Information: - [Rails 3 I18n changes](http://blog.plataformatec.com.br/2010/02/rails-3-i18n-changes/)
-
+詳しくは「[Rails 3 I18n changes](http://blog.plataformatec.com.br/2010/02/rails-3-i18n-changes/)」を参照してください。
 
 Railties
 --------
 
-With the decoupling of the main Rails frameworks, Railties got a huge overhaul so as to make linking up frameworks, engines or plugins as painless and extensible as possible:
+主要なRailsフレームワークの分離作業に伴って、Railtiesも大規模にオーバーホールされ、フレームワーク/エンジン/プラグインをできるだけ楽に拡張できる形で連結しました。
 
-* Each application now has its own name space, application is started with `YourAppName.boot` for example, makes interacting with other applications a lot easier.
-* Anything under `Rails.root/app` is now added to the load path, so you can make `app/observers/user_observer.rb` and Rails will load it without any modifications.
-* Rails 3.0 now provides a `Rails.config` object, which provides a central repository of all sorts of Rails wide configuration options.
+* アプリケーションごとに独自の名前空間が与えられます。アプリケーションはたとえば`アプリ名.boot`で始まり、他のアプリケーションとのやりとりが今よりもずっと簡単になります。
+* `Rails.root/app`以下に置かれるものはすべて読み込みパスに追加されるようになりました。これにより、たとえば`app/observers/user_observer.rb`を作るだけで、設定変更なしでRailsが読み込んでくれます。
+* Rails 3.0では`Rails.config`オブジェクトが提供されます。これは、Railsの膨大な設定オプションをすべて集約する中央リポジトリを提供します。
 
-    Application generation has received extra flags allowing you to skip the installation of test-unit, Active Record, Prototype and Git. Also a new `--dev` flag has been added which sets the application up with the `Gemfile` pointing to your Rails checkout (which is determined by the path to the `rails` binary). See `rails --help` for more info.
+アプリケーション生成時に、test-unit/Active Record/Prototype.js/Gitのインストールをスキップするフラグも渡せるようになりました。また、`--dev`フラグも新たに追加されたことで、Railsを指す`Gemfile`をチェックアウト状態でアプリをセットアップできるようになりました（これは`rails`バイナリへのパスで決定されます）。詳しくは`rails --help`を参照してください。
 
-Railties generators got a huge amount of attention in Rails 3.0, basically:
+Rails 3.0のRailtiesジェネレータでは、基本的に以下のようなさまざまな注意点があります。
 
-* Generators were completely rewritten and are backwards incompatible.
-* Rails templates API and generators API were merged (they are the same as the former).
-* Generators are no longer loaded from special paths anymore, they are just found in the Ruby load path, so calling `rails generate foo` will look for `generators/foo_generator`.
-* New generators provide hooks, so any template engine, ORM, test framework can easily hook in.
-* New generators allow you to override the templates by placing a copy at `Rails.root/lib/templates`.
-* `Rails::Generators::TestCase` is also supplied so you can create your own generators and test them.
+* ジェネレータが完全に書き直されたことで後方互換性が失われた
+* RailsテンプレートAPIとジェネレータAPIがマージされた: 利用上は従来と同じです
+* ジェネレータは特殊なパスからの読み込みを行わなくなった: 今後はRubyの読み込みパスのみを探索しますので、`rails generate foo`を呼び出すと`generators/foo_generator`を探索します。
+* 新しいジェネレータではフックが提供される: あらゆるテンプレートエンジン/ORM/テストフレームワークを簡単にフックインできます
+* 新しいジェネレータでは、`Rails.root/lib/templates`にテンプレートのコピーを置くことでテンプレートをオーバーライドできる
+* `Rails::Generators::TestCase`も提供される: これを用いて独自のジェネレータを作成・テストできます
 
-Also, the views generated by Railties generators had some overhaul:
+また、Railtiesジェネレータで生成されるビューについてもいくつかオーバーホールが行われました。
 
-* Views now use `div` tags instead of `p` tags.
-* Scaffolds generated now make use of `_form` partials, instead of duplicated code in the edit and new views.
-* Scaffold forms now use `f.submit` which returns "Create ModelName" or "Update ModelName" depending on the state of the object passed in.
+* ビューで`p`タグの代わりに`div`タグが使われるようになった
+* scaffoldジェネレータで、editビューとnewビューの重複コードの代わりに`_form`パーシャルを使うようになった
+* scaffoldフォームで`f.submit`が使われるようになった: これは、渡されるオブジェクトのステートに応じて「Create ModelName」または「Update ModelName」を返します
 
-Finally a couple of enhancements were added to the rake tasks:
+最後に、rakeタスクもいくつかの点が拡張されました。
 
-* `rake db:forward` was added, allowing you to roll forward your migrations individually or in groups.
-* `rake routes CONTROLLER=x` was added allowing you to just view the routes for one controller.
+* `rake db:forward`が追加された: マイグレーションを個別またはグループにまとめてロールフォワードできます
+* `rake routes CONTROLLER=x`が追加された: コントローラを1つ指定してルーティングを表示できます。
 
-Railties now deprecates:
+Railtiesで以下が非推奨化されました。
 
-* `RAILS_ROOT` in favor of `Rails.root`,
-* `RAILS_ENV` in favor of `Rails.env`, and
-* `RAILS_DEFAULT_LOGGER` in favor of `Rails.logger`.
+* `RAILS_ROOT`が非推奨化: 今後は`Rails.root`を使います
+* `RAILS_ENV`が非推奨化: 今後は`Rails.env`を使います
+* `RAILS_DEFAULT_LOGGER`が非推奨化: `Rails.logger`を使います
 
-`PLUGIN/rails/tasks`, and `PLUGIN/tasks` are no longer loaded all tasks now must be in `PLUGIN/lib/tasks`.
+`PLUGIN/rails/tasks`と`PLUGIN/tasks`は今後どのタスクでも読み込まれなくなったので、今後は`PLUGIN/lib/tasks`を使わなければなりません。
 
-More information:
+詳しくは以下を参照してください。
 
 * [Discovering Rails 3 generators](http://blog.plataformatec.com.br/2010/01/discovering-rails-3-generators)
 * [Making Generators for Rails 3 with Thor](http://caffeinedd.com/guides/331-making-generators-for-rails-3-with-thor)
@@ -217,72 +209,69 @@ More information:
 Action Pack
 -----------
 
-There have been significant internal and external changes in Action Pack.
-
+Action Packは内部と外部ともに大きく変更されました。
 
 ### Abstract Controller
 
-Abstract Controller pulls out the generic parts of Action Controller into a reusable module that any library can use to render templates, render partials, helpers, translations, logging, any part of the request response cycle. This abstraction allowed `ActionMailer::Base` to now just inherit from `AbstractController` and just wrap the Rails DSL onto the Mail gem.
+Action Controllerから一般性の高い部分をAbstract Controllerに切り出して再利用可能なモジュールとし、テンプレートやパーシャルのレンダリング、ヘルパー、訳文、ログ出力など「リクエスト-レスポンス」サイクルのあらゆる要素をどのライブラリからでも利用できるようにしました。この抽象化によって、`ActionMailer::Base`は`AbstractController`を継承してRails DSLをMail gemでラップするだけで済むようになりました。
 
-It also provided an opportunity to clean up Action Controller, abstracting out what could to simplify the code.
+Abstract Controllerを導入したことで、Action Controllerのコードをクリーンアップするよい機会となり、コードをシンプルにする部分が抽象化されました。
 
-Note however that Abstract Controller is not a user facing API, you will not run into it in your day to day use of Rails.
+ただし、Abstract Controllerはユーザー（開発者）が直接使うAPIではない点にご注意ください。日々のRails開発でAbstract Controllerを使うことはありません。
 
-More Information: - [Rails Edge Architecture](http://yehudakatz.com/2009/06/11/rails-edge-architecture/)
-
+詳しくは「[Rails Edge Architecture](http://yehudakatz.com/2009/06/11/rails-edge-architecture/)」を参照してください。
 
 ### Action Controller
 
-* `application_controller.rb` now has `protect_from_forgery` on by default.
-* The `cookie_verifier_secret` has been deprecated and now instead it is assigned through `Rails.application.config.cookie_secret` and moved into its own file: `config/initializers/cookie_verification_secret.rb`.
-* The `session_store` was configured in `ActionController::Base.session`, and that is now moved to `Rails.application.config.session_store`. Defaults are set up in `config/initializers/session_store.rb`.
-* `cookies.secure` allowing you to set encrypted values in cookies with `cookie.secure[:key] => value`.
-* `cookies.permanent` allowing you to set permanent values in the cookie hash `cookie.permanent[:key] => value` that raise exceptions on signed values if verification failures.
-* You can now pass `:notice => 'This is a flash message'` or `:alert => 'Something went wrong'` to the `format` call inside a `respond_to` block. The `flash[]` hash still works as previously.
-* `respond_with` method has now been added to your controllers simplifying the venerable `format` blocks.
-* `ActionController::Responder` added allowing you flexibility in how your responses get generated.
+* `application_controller.rb`に`protect_from_forgery`がデフォルトで含まれるようになりました。
+* `cookie_verifier_secret`は非推奨化され、今後は`Rails.application.config.cookie_secret`で代入されます。また、これは`config/initializers/cookie_verification_secret.rb`という独自のファイルに移動しました。
+* `session_store`は`ActionController::Base.session`で設定されるようになり、`Rails.application.config.session_store`に移動しました。デフォルトは`config/initializers/session_store.rb`で設定されます。
+* `cookies.secure`を用いて、暗号化された値を`cookie.secure[:key] => value`でcookieに設定できます。
+* `cookies.permanent`を用いて、恒久的な値を`cookie.permanent[:key] => value`でcookieハッシュに設定できます。署名済みの値が検証に失敗すると例外がraiseされます。
+* `respond_to`ブロック内の`format`呼び出しに、`:notice => 'This is a flash message'`や`:alert => 'Something went wrong'`を渡せるようになりました。`flash[]`ハッシュの動作は従来と同じです。
+* `respond_with`メソッドがコントローラに追加されます。これを用いて、込み入った`format`ブロックをシンプルに書けます。
+* `ActionController::Responder`が追加されました。これを用いて、レスポンスを柔軟に生成できます。
 
-Deprecations:
+以下が非推奨化されました。
 
-* `filter_parameter_logging` is deprecated in favor of `config.filter_parameters << :password`.
+* `filter_parameter_logging`が非推奨化されました。今後は`config.filter_parameters << :password`をお使いください。
 
-More Information:
+詳しくは以下を参照してください。
 
 * [Render Options in Rails 3](http://www.engineyard.com/blog/2010/render-options-in-rails-3/)
 * [Three reasons to love ActionController::Responder](http://weblog.rubyonrails.org/2009/8/31/three-reasons-love-responder)
 
-
 ### Action Dispatch
 
-Action Dispatch is new in Rails 3.0 and provides a new, cleaner implementation for routing.
+Action DispatchはRails 3.0で新しく追加されました。これはルーティングの明快な実装を新たに提供します。
 
-* Big clean up and re-write of the router, the Rails router is now `rack_mount` with a Rails DSL on top, it is a stand alone piece of software.
-* Routes defined by each application are now name spaced within your Application module, that is:
+* ルーターが大々的に書き直されてクリーンアップされたことで、RailsのルーターがRails DSLを持つ`rack_mount`となりました。これは単独のソフトウェアです。
+* 各アプリケーションで定義されるルーティングは、以下のようにApplicationモジュール内で名前空間化されるようになりました。
 
     ```ruby
-    # Instead of:
+    # 従来
 
     ActionController::Routing::Routes.draw do |map|
       map.resources :posts
     end
 
-    # You do:
+    # 今後はこのように書く
 
     AppName::Application.routes do
       resources :posts
     end
     ```
 
-* Added `match` method to the router, you can also pass any Rack application to the matched route.
-* Added `constraints` method to the router, allowing you to guard routers with defined constraints.
-* Added `scope` method to the router, allowing you to namespace routes for different languages or different actions, for example:
+* `match`メソッドがルーターに追加され、マッチしたルーティングに任意のRackアプリケーションも渡せるようになりました。
+* `constraints`メソッドがルーターに追加され、定義済みの制約を用いてルーターを保護できるようになりました。
+* `scope`メソッドがルーターに追加され、以下のようにさまざまな言語（ロケール）やアクションへのルーティングを名前空間化できるようになりました。
 
     ```ruby
     scope 'es' do
       resources :projects, :path_names => { :edit => 'cambiar' }, :path => 'proyecto'
     end
 
-    # Gives you the edit action with /es/proyecto/1/cambiar
+    # /es/proyecto/1/cambiarでeditアクションにアクセスできる
     ```
 
 * Added `root` method to the router as a short cut for `match '/', :to => path`.
